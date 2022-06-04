@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:MyCraft"
         xmlns:UI="clr-namespace:MyCraft.UI" x:Class="MyCraft.MainWindow"
         mc:Ignorable="d"
+        x:Name="viewport"
         Title="MyCraft" Height="800" Width="1200">
     <Grid>
         <Canvas x:Name="main_canvas">
@@ -15,7 +16,20 @@
                     <GradientStop Color="#FF0A475B" Offset="1"/>
                 </LinearGradientBrush>
             </Canvas.Background>
-            <UI:Healthbar Canvas.Right="10" Canvas.Top="10" Width="100" Height="20"/>
+        
+            
+        </Canvas>
+
+        <Canvas x:Name="ui_canvas">
+            <Grid Canvas.Right="10" Canvas.Top="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+                <UI:HealthBar Grid.Row="0" Width="100" Height="20"/>
+                <UI:ManaBar Grid.Row="1" Width="100" Height="20"/>
+            </Grid>
+
             <Button Click="Button_Click">Damage Player</Button>
         </Canvas>
 

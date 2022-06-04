@@ -15,8 +15,8 @@ namespace MyGameEngine.Core
 
         public Player()
         {
-            HealthPool = new ResourceBar();
-            ManaPool = new ResourceBar();
+            HealthPool = new ResourcePool();
+            ManaPool = new ResourcePool();
 
             HealthPool.SetResource(Health);
             HealthPool.SetMaxResource(Health);

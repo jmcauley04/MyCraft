@@ -2,7 +2,7 @@
 
 namespace MyGameEngine.Core.UI
 {
-    public class ResourceBar : IResourcePool
+    public class ResourcePool : IResourcePool
     {
         double _resource;
         double _maxResource;
