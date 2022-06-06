@@ -9,15 +9,18 @@
         x:Name="viewport"
         Title="MyCraft" Height="800" Width="1200">
     <Grid>
-        <Canvas x:Name="main_canvas">
+        <Canvas x:Name="main_canvas" MouseRightButtonUp="OpenCanvasContextMenu">
+            <Canvas.Resources>
+                <ContextMenu x:Key="cmCanvas">
+                    <MenuItem Header="Edit" Click="OpenEditorMenu" />
+                </ContextMenu>
+            </Canvas.Resources>
             <Canvas.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF67A1B5"/>
                     <GradientStop Color="#FF0A475B" Offset="1"/>
                 </LinearGradientBrush>
-            </Canvas.Background>
-        
-            
+            </Canvas.Background>      
         </Canvas>
 
         <Canvas x:Name="ui_canvas">

@@ -1,4 +1,7 @@
-﻿using MyGameEngine.Shared.Records;
+﻿using MyGameEngine.Core.GameObjects.Blocks;
+using MyGameEngine.Shared;
+using MyGameEngine.Shared.Interfaces;
+using MyGameEngine.Shared.Records;
 
 namespace MyGameEngine.Core
 {
@@ -11,11 +14,21 @@ namespace MyGameEngine.Core
         public Action<ColorRecord[,,]>? OnViewChanged { get; set; }
 
         private ColorRecord[,,] _view;
+        List<IRenderableGameObject> _gameObjects = new();
 
         public ViewManager()
         {
             if (_view is null)
                 _view = GenerateView();
+
+            for (int x = 0; x < _view.GetLength(0); x += 3)
+                for (int y = 60; y < _view.GetLength(1); y += 3)
+                {
+                    if (y == 60)
+                        PlaceBlockAt<GrassBlock>(x, y);
+                    else
+                        PlaceBlockAt<DirtBlock>(x, y);
+                }
         }
 
         public ColorRecord[,,] GetView()
@@ -27,29 +40,61 @@ namespace MyGameEngine.Core
         {
             var view = new ColorRecord[ResolutionX, ResolutionY, LayersZ];
 
-            for (int x = 0; x < ResolutionX; x++)
+            foreach (var gameObject in _gameObjects)
             {
-                for (int y = 0; y < ResolutionY; y++)
+                foreach (var pixel in gameObject.GetPixels())
                 {
-                    if (y > ResolutionY - 20 && y <= ResolutionY - 19)
-                        view[x, y, 0] = new ColorRecord(40, 200, 40, x, y);
+                    var x = pixel.X;
+                    var y = pixel.Y;
+                    var worldPixel = pixel with
+                    {
+                        X = gameObject.XPosition + x,
+                        Y = gameObject.YPosition + y
+                    };
 
-                    if (y > ResolutionY - 19 && y <= ResolutionY - 0)
-                        view[x, y, 0] = new ColorRecord(200, 150, 40, x, y);
+                    if (gameObject.XPosition + pixel.X < view.GetLength(0) && gameObject.YPosition + pixel.Y < view.GetLength(1))
+                        view[gameObject.XPosition + pixel.X, gameObject.YPosition + pixel.Y, 0] = worldPixel;
                 }
             }
 
             return view;
         }
 
-        public void UpdateView(ColorRecord[,,] view)
+        public void UpdateView(IBlock block)
         {
-            foreach (var color in view)
+            var changedView = new ColorRecord[block.Width, block.Height, 1];
+
+            foreach (var pixel in block.GetPixels())
             {
-                _view[color.X, color.Y, color.Z] = color;
+                var x = pixel.X;
+                var y = pixel.Y;
+                var worldPixel = pixel with
+                {
+                    X = block.XPosition + x,
+                    Y = block.YPosition + y
+                };
+
+                if (block.XPosition + pixel.X < _view.GetLength(0) && block.YPosition + pixel.Y < _view.GetLength(1))
+                {
+                    _view[block.XPosition + pixel.X, block.YPosition + pixel.Y, 0] = worldPixel;
+                    changedView[pixel.X, pixel.Y, 0] = worldPixel with
+                    {
+                        X = pixel.X + block.XPosition,
+                        Y = pixel.Y + block.YPosition
+                    };
+                }
             }
 
-            OnViewChanged?.Invoke(view);
+            OnViewChanged?.Invoke(changedView);
+        }
+
+        public void PlaceBlockAt<T>(int posX, int posY) where T : IBlock, new()
+        {
+            var block = new T();
+            block.Place(posX, posY);
+            _gameObjects.Add(block);
+
+            UpdateView(block);
         }
     }
 }

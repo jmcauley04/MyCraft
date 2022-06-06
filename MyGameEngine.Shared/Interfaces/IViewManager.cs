@@ -1,6 +1,7 @@
-﻿using MyGameEngine.Shared.Records;
+﻿using MyGameEngine.Shared.Interfaces;
+using MyGameEngine.Shared.Records;
 
-namespace MyGameEngine.Core;
+namespace MyGameEngine.Shared;
 
 public interface IViewManager
 {
@@ -8,5 +9,5 @@ public interface IViewManager
     public int ResolutionX { get; }
     public int ResolutionY { get; }
     public ColorRecord[,,] GetView();
-    public void UpdateView(ColorRecord[,,] view);
+    void PlaceBlockAt<T>(int posX, int posY) where T : IBlock, new();
 }

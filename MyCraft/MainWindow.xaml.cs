@@ -1,4 +1,6 @@
-﻿using MyGameEngine.Core;
+﻿using MyCraft.Editor;
+using MyGameEngine.Core;
+using MyGameEngine.Shared;
 using MyGameEngine.Shared.Records;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +18,8 @@ namespace MyCraft
         int _viewWidth;
         int _viewHeight;
         private IViewManager _viewManager;
+
+        EditorMenu? _editorMenu;
 
         public MainWindow()
         {
@@ -68,13 +72,22 @@ namespace MyCraft
         private Rectangle[,] GetColorMap()
         {
             var pixels = new Rectangle[_viewManager.ResolutionX, _viewManager.ResolutionY];
+            var view = _viewManager.GetView();
 
-            foreach (var color in _viewManager.GetView())
+            for (int x = 0; x < view.GetLength(0); x++)
             {
-                if (color is null)
-                    continue;
+                for (int y = 0; y < view.GetLength(1); y++)
+                {
+                    for (int z = 0; z < view.GetLength(2); z++)
+                    {
+                        var color = view[x, y, z];
 
-                pixels[color.X, color.Y] = GetRectangle(color);
+                        if (color is null)
+                            continue;
+
+                        pixels[x, y] = GetRectangle(color);
+                    }
+                }
             }
 
             return pixels;
@@ -110,6 +123,29 @@ namespace MyCraft
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             ServiceProvider.GameManager.GetPlayer().TakeDamage(10);
+        }
+
+        private void OpenCanvasContextMenu(object sender, RoutedEventArgs e)
+        {
+            ContextMenu? cm = main_canvas.FindResource("cmCanvas") as ContextMenu;
+
+            if (cm is not null)
+            {
+                cm.PlacementTarget = sender as Button;
+                cm.IsOpen = true;
+            }
+        }
+
+        private void OpenEditorMenu(object sender, RoutedEventArgs e)
+        {
+            if (_editorMenu is null)
+            {
+                _editorMenu = new EditorMenu();
+                _editorMenu.Closed += (s, e) => _editorMenu = null;
+            }
+
+            _editorMenu.Show();
+            _editorMenu.Activate();
         }
     }
 }
