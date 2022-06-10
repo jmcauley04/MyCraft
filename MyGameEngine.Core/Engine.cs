@@ -10,10 +10,13 @@ public abstract class Engine
     private Display? _window;
     private Thread? _gameLoopThread;
     private CancellationTokenSource _threadCancellationToken;
+    // TODO: Move these into a GameObjectManager
     private static List<Sprite2D> _sprites = new List<Sprite2D>();
     private static List<Shape2D> _shapes = new List<Shape2D>();
 
     public Color BackgroundColor = Color.Black;
+
+    // TODO: Move Camera properties into something else - CameraManager or Camera object?
     public Vector2 CameraPosition = Vector2.Zero();
     public float CameraAngle = 0f;
 
