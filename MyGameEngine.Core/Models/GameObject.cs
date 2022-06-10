@@ -49,4 +49,6 @@ public abstract class GameObject
 
         return false;
     }
+
+    public abstract void Draw(Graphics g);
 }

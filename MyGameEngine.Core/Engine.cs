@@ -1,4 +1,4 @@
-﻿using MyGameEngine.Core.Extensions;
+﻿using MyGameEngine.Core.Interfaces;
 using MyGameEngine.Core.Managers;
 using MyGameEngine.Core.Models;
 
@@ -6,6 +6,8 @@ namespace MyGameEngine.Core;
 
 public abstract class Engine
 {
+    ControllersManager _controllersManager;
+
     protected Vector2 _screenSize = new Vector2(1200, 800);
     private string _title;
     private Display? _window;
@@ -33,7 +35,8 @@ public abstract class Engine
 
     public void Initialize()
     {
-        _window = new Display();
+        _controllersManager = new();
+        _window = new();
         _window.Size = new Size((int)_screenSize.X, (int)_screenSize.Y);
         _window.Text = _title;
         _window.FormBorderStyle = FormBorderStyle.FixedToolWindow;
@@ -47,16 +50,6 @@ public abstract class Engine
         _gameLoopThread.Start();
 
         Application.Run(_window);
-    }
-
-    private void KeyUp(object? sender, KeyEventArgs e)
-    {
-        GetKeyUp(e);
-    }
-
-    private void KeyDown(object? sender, KeyEventArgs e)
-    {
-        GetKeyDown(e);
     }
 
     private void OnClose(object? sender, FormClosingEventArgs e)
@@ -93,7 +86,10 @@ public abstract class Engine
         }
     }
 
-
+    protected T LoadController<T>() where T : IGameController, new()
+    {
+        return _controllersManager.LoadController<T>();
+    }
 
     private void Renderer(object? sender, PaintEventArgs e)
     {
@@ -104,15 +100,8 @@ public abstract class Engine
 
         try
         {
-            foreach (var shape in GameObjectManager.GetGameObjects<Shape2D>())
-            {
-                g.FillRectangle(new SolidBrush(shape.Fill), shape.Rectangle());
-            }
-
-            foreach (var sprite in GameObjectManager.GetGameObjects<Sprite2D>())
-            {
-                g.DrawImage(sprite.Sprite, sprite.Position.X, sprite.Position.Y, sprite.Scale.X, sprite.Scale.Y);
-            }
+            foreach (var shape in GameObjectManager.GetGameObjects())
+                shape.Draw(g);
         }
         catch (Exception ex)
         {
@@ -130,8 +119,33 @@ public abstract class Engine
     /// <summary>
     /// After the graphics are drawn
     /// </summary>
-    public abstract void OnUpdate();
+    public virtual void OnUpdate()
+    {
+        _controllersManager.Update();
+    }
 
-    public abstract void GetKeyUp(KeyEventArgs e);
-    public abstract void GetKeyDown(KeyEventArgs e);
+    private void KeyUp(object? sender, KeyEventArgs e)
+    {
+        GetKeyUp(e);
+    }
+
+    private void KeyDown(object? sender, KeyEventArgs e)
+    {
+        GetKeyDown(e);
+    }
+
+    public virtual void GetKeyDown(KeyEventArgs e)
+    {
+        GetKeys(e, true);
+    }
+
+    public virtual void GetKeyUp(KeyEventArgs e)
+    {
+        GetKeys(e, false);
+    }
+
+    private void GetKeys(KeyEventArgs e, bool target)
+    {
+        _controllersManager.SetKey(e.KeyCode.ToString(), target);
+    }
 }

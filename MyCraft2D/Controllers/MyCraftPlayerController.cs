@@ -1,21 +1,24 @@
-﻿using MyCraft2D;
+﻿using MyGameEngine.Core.Controllers;
 using MyGameEngine.Core.Extensions;
 using MyGameEngine.Core.Models;
 
-namespace MyGameEngine.Core.Controllers;
+namespace MyCraft2D.Controllers;
 
-public class MyCraftPlayerController : PlayerController
+public class MyCraftPlayerController : GameController
 {
     static int _iterationsPerImage = 10;
     static int _iterationNumber = 0;
     static int _iteration = 0;
 
-    float _playerSpeed = 2f;
+    Player? _player;
+    float _basePlayerSpeed = 2f;
+    float _playerSpeed => _sprint ? _basePlayerSpeed * 1.5f : _basePlayerSpeed;
 
     bool _left;
     bool _right;
     bool _up;
     bool _down;
+    bool _sprint;
 
     public override void OnUpdate()
     {
@@ -24,6 +27,11 @@ public class MyCraftPlayerController : PlayerController
             UpdateAnimation();
             UpdateMovement();
         }
+    }
+
+    public void SetPlayer(Player player)
+    {
+        _player = player;
     }
 
     public override void SetKey(string key, bool target)
@@ -42,12 +50,15 @@ public class MyCraftPlayerController : PlayerController
             case "S":
                 _down = target;
                 break;
+            case "ShiftKey":
+                _sprint = target;
+                break;
         }
     }
 
     private void UpdateMovement()
     {
-        if (_player is null) return;
+        if (_player is null || !_player.IsAlive) return;
 
         var oldPosition = new Vector2(_player.Position.X, _player.Position.Y);
 
@@ -71,6 +82,8 @@ public class MyCraftPlayerController : PlayerController
             _player.Position.Y += _playerSpeed;
         }
 
+        _player.Position.BoundDistanceFrom(oldPosition, _playerSpeed);
+
         if (_player.IsColliding("Ground") is not null)
         {
             var newPosition = new Vector2(_player.Position.X, _player.Position.Y);
@@ -92,6 +105,14 @@ public class MyCraftPlayerController : PlayerController
     {
         if (_player is null) return;
 
+        // If Dead
+        if (!_player.IsAlive)
+        {
+            _player.Sprite = MyCraftImageHandler.GetImage(ImageId.PlayerRight, _iterationNumber);
+            return;
+        }
+
+        // Else animate movement
         if (_left)
         {
             _player.Sprite = MyCraftImageHandler.GetImage(ImageId.PlayerLeft, _iterationNumber);
@@ -112,6 +133,7 @@ public class MyCraftPlayerController : PlayerController
             _player.Sprite = MyCraftImageHandler.GetImage(ImageId.PlayerDown, _iterationNumber);
         }
 
+        // Iterate the animation index
         if (_left || _up || _right || _down)
         {
             if (_iteration >= _iterationsPerImage)

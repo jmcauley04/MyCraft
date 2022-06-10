@@ -1,19 +1,17 @@
 ﻿using MyGameEngine.Core.Interfaces;
-using MyGameEngine.Core.Models;
 
 namespace MyGameEngine.Core.Managers;
 
 public class ControllersManager
 {
-    List<IGameController> _controllers = new List<IGameController>();
+    List<IGameController> _controllers = new();
 
     Action? OnUpdate;
     Action<string, bool>? OnSetKey;
 
-    public IGameController LoadController<T>(GameObject gameObject) where T : IGameController, new()
+    public T LoadController<T>() where T : IGameController, new()
     {
         var ctrl = new T();
-        ctrl.SetGameObject(gameObject);
         OnUpdate += ctrl.OnUpdate;
         OnSetKey += ctrl.SetKey;
         _controllers.Add(ctrl);

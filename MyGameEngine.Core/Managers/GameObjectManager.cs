@@ -4,11 +4,11 @@ namespace MyGameEngine.Core.Managers;
 
 public static class GameObjectManager
 {
-    private static Dictionary<Type, HashSet<GameObject>> _dictionary = new();
+    private static Dictionary<int, HashSet<GameObject>> _dictionary = new();
 
     public static IEnumerable<GameObject> GetGameObjects()
     {
-        foreach (var kvp in _dictionary)
+        foreach (var kvp in _dictionary.OrderBy(x => x.Key))
             foreach (var gameobject in kvp.Value)
                 yield return gameobject;
     }
@@ -20,23 +20,23 @@ public static class GameObjectManager
             .Cast<T>();
     }
 
-    public static void RegisterGameObject<T>(T gameObject) where T : GameObject
+    public static void RegisterGameObject(GameObject gameObject, int layer = 0)
     {
-        var type = gameObject.GetType();
+        if (!_dictionary.ContainsKey(layer))
+            _dictionary[layer] = new();
 
-        if (!_dictionary.ContainsKey(type))
-            _dictionary.Add(type, new HashSet<GameObject>());
-
-        _dictionary[type].Add(gameObject);
+        _dictionary[layer].Add(gameObject);
     }
 
-    public static void UnregisterGameObject<T>(T gameObject) where T : GameObject
+    public static void UnregisterGameObject(GameObject gameObject)
     {
-        var type = gameObject.GetType();
+        foreach (var kvp in _dictionary)
+            if (kvp.Value.Contains(gameObject))
+            {
+                kvp.Value.Remove(gameObject);
 
-        _dictionary[type].Remove(gameObject);
-
-        if (_dictionary[type].Count == 0)
-            _dictionary.Remove(type);
+                if (kvp.Value.Count == 0)
+                    _dictionary.Remove(kvp.Key);
+            }
     }
 }

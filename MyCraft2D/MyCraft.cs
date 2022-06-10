@@ -1,35 +1,17 @@
-﻿using MyGameEngine.Core;
+﻿using MyCraft2D.Controllers;
+using MyGameEngine.Core;
 using MyGameEngine.Core.Assets;
-using MyGameEngine.Core.Controllers;
 using MyGameEngine.Core.Factories;
-using MyGameEngine.Core.Managers;
 using MyGameEngine.Core.Models;
 
 namespace MyCraft2D;
 
 public class MyCraft : Engine
 {
-    ControllersManager _controllersManager;
-
     static int _tileSize = 50;
 
     public MyCraft() : base(new Vector2(1200, 800), "My Craft")
     {
-    }
-
-    public override void GetKeyDown(KeyEventArgs e)
-    {
-        GetKeys(e, true);
-    }
-
-    public override void GetKeyUp(KeyEventArgs e)
-    {
-        GetKeys(e, false);
-    }
-
-    private void GetKeys(KeyEventArgs e, bool target)
-    {
-        _controllersManager.SetKey(e.KeyCode.ToString(), target);
     }
 
     public override void OnDraw()
@@ -38,14 +20,8 @@ public class MyCraft : Engine
 
     public override void OnLoad()
     {
-        _controllersManager = new();
         MyCraftImageHandler.CacheImages();
         LoadMap(Maps.One);
-    }
-
-    public override void OnUpdate()
-    {
-        _controllersManager.Update();
     }
 
     public void LoadMap(string[,] map)
@@ -64,8 +40,12 @@ public class MyCraft : Engine
                 }
                 else if (map[x, y] == "p")
                 {
-                    var _player = GameObjectFactory.RegisterSprite<Sprite2D, ImageId>(new Vector2(y * _tileSize + _tileSize / 8, x * _tileSize), new Vector2(_tileSize, _tileSize), "Player", ImageId.PlayerRight);
-                    _controllersManager.LoadController<MyCraftPlayerController>(_player);
+                    var _player = GameObjectFactory.RegisterSprite<Player, ImageId>(new Vector2(y * _tileSize + _tileSize / 8, x * _tileSize), new Vector2(_tileSize, _tileSize), "Player", ImageId.PlayerRight);
+                    LoadController<MyCraftPlayerController>()
+                        .SetPlayer(_player);
+
+                    LoadController<StatusBarsController>()
+                        .SetPlayer(_player);
                 }
             }
         }

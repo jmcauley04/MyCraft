@@ -1,6 +1,6 @@
 ﻿namespace MyGameEngine.Core.Models;
 
-public class Vector2
+public record Vector2
 {
     public float X { get; set; }
     public float Y { get; set; }
