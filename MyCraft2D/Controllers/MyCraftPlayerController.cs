@@ -1,4 +1,5 @@
-﻿using MyGameEngine.Core.Controllers;
+﻿using MyGameEngine.Core;
+using MyGameEngine.Core.Controllers;
 using MyGameEngine.Core.Extensions;
 using MyGameEngine.Core.Models;
 
@@ -12,6 +13,7 @@ public class MyCraftPlayerController : GameController
 
     Player? _player;
     float _basePlayerSpeed = 2f;
+    float _maxReach = 100f;
     float _playerSpeed => _sprint ? _basePlayerSpeed * 1.5f : _basePlayerSpeed;
 
     bool _left;
@@ -53,6 +55,23 @@ public class MyCraftPlayerController : GameController
             case "ShiftKey":
                 _sprint = target;
                 break;
+        }
+    }
+
+    public override void SetMouse(string button, bool isDown, Vector2 coords)
+    {
+        if (isDown)
+        {
+            if (_player is null)
+                return;
+
+            Log.Info(coords.ToString() + ":" + _player.Position.ToString());
+            var distance = coords.DistanceFrom(_player.Position + (_player.Scale / 2f));
+
+            if (distance <= _maxReach)
+                Log.Info($"I can reach it! {distance}");
+            else
+                Log.Info($"I can't reach it! {distance}");
         }
     }
 

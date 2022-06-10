@@ -44,6 +44,8 @@ public abstract class Engine
         _window.KeyDown += KeyDown;
         _window.KeyUp += KeyUp;
         _window.FormClosing += OnClose;
+        _window.MouseDown += MouseDown;
+        _window.MouseUp += MouseUp;
 
         _threadCancellationToken = new CancellationTokenSource();
         _gameLoopThread = new Thread(GameLoop);
@@ -95,8 +97,8 @@ public abstract class Engine
     {
         Graphics g = e.Graphics;
         g.Clear(BackgroundColor);
-        g.TranslateTransform(CameraPosition.X, CameraPosition.Y);
-        g.RotateTransform(CameraAngle);
+        //g.TranslateTransform(CameraPosition.X, CameraPosition.Y);
+        //g.RotateTransform(CameraAngle);
 
         try
         {
@@ -147,5 +149,20 @@ public abstract class Engine
     private void GetKeys(KeyEventArgs e, bool target)
     {
         _controllersManager.SetKey(e.KeyCode.ToString(), target);
+    }
+
+    private void MouseDown(object? sender, MouseEventArgs e)
+    {
+        SetMouse(e, true);
+    }
+
+    private void MouseUp(object? sender, MouseEventArgs e)
+    {
+        SetMouse(e, false);
+    }
+
+    private void SetMouse(MouseEventArgs e, bool target)
+    {
+        _controllersManager.SetMouse(e.Button.ToString(), target, new(e.X, e.Y));
     }
 }

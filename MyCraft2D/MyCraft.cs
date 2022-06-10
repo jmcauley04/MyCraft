@@ -10,7 +10,7 @@ public class MyCraft : Engine
 {
     static int _tileSize = 50;
 
-    public MyCraft() : base(new Vector2(1200, 800), "My Craft")
+    public MyCraft() : base(new Vector2(1200, 800), "MyCraft")
     {
     }
 
