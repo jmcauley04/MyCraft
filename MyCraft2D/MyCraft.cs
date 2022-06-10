@@ -1,6 +1,5 @@
 ﻿using MyGameEngine.Core;
 using MyGameEngine.Core.Assets;
-using MyGameEngine.Core.Caches;
 using MyGameEngine.Core.Controllers;
 using MyGameEngine.Core.Factories;
 using MyGameEngine.Core.Managers;
@@ -40,7 +39,7 @@ public class MyCraft : Engine
     public override void OnLoad()
     {
         _controllersManager = new();
-        ImageCache.CacheImages();
+        MyCraftImageHandler.CacheImages();
         LoadMap(Maps.One);
     }
 
@@ -65,8 +64,8 @@ public class MyCraft : Engine
                 }
                 else if (map[x, y] == "p")
                 {
-                    var _player = GameObjectFactory.RegisterSprite<Sprite2D>(new Vector2(y * _tileSize + _tileSize / 8, x * _tileSize), new Vector2(_tileSize, _tileSize), "Player", ImageCache.ImageId.PlayerRight);
-                    _controllersManager.LoadController<PlayerController>(_player);
+                    var _player = GameObjectFactory.RegisterSprite<Sprite2D, ImageId>(new Vector2(y * _tileSize + _tileSize / 8, x * _tileSize), new Vector2(_tileSize, _tileSize), "Player", ImageId.PlayerRight);
+                    _controllersManager.LoadController<MyCraftPlayerController>(_player);
                 }
             }
         }

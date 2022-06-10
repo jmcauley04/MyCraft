@@ -10,7 +10,7 @@ public class ControllersManager
     Action? OnUpdate;
     Action<string, bool>? OnSetKey;
 
-    public IGameController LoadController<T>(BaseDrawable gameObject) where T : IGameController, new()
+    public IGameController LoadController<T>(GameObject gameObject) where T : IGameController, new()
     {
         var ctrl = new T();
         ctrl.SetGameObject(gameObject);

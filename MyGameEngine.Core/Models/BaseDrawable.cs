@@ -1,12 +1,12 @@
 ﻿namespace MyGameEngine.Core.Models;
 
-public abstract class BaseDrawable
+public abstract class GameObject
 {
     public Vector2 Position;
     public Vector2 Scale;
     public string Tag = string.Empty;
 
-    public bool IsColliding(BaseDrawable? other)
+    public bool IsColliding(GameObject? other)
     {
         if (other is null)
             return false;
@@ -22,7 +22,7 @@ public abstract class BaseDrawable
         return false;
     }
 
-    public bool IsCollidingX(BaseDrawable? other)
+    public bool IsCollidingX(GameObject? other)
     {
         if (other is null)
             return false;
@@ -36,7 +36,7 @@ public abstract class BaseDrawable
         return false;
     }
 
-    public bool IsCollidingY(BaseDrawable? other)
+    public bool IsCollidingY(GameObject? other)
     {
         if (other is null)
             return false;

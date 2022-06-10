@@ -1,4 +1,5 @@
 ﻿using MyGameEngine.Core.Extensions;
+using MyGameEngine.Core.Managers;
 using MyGameEngine.Core.Models;
 
 namespace MyGameEngine.Core;
@@ -10,9 +11,6 @@ public abstract class Engine
     private Display? _window;
     private Thread? _gameLoopThread;
     private CancellationTokenSource _threadCancellationToken;
-    // TODO: Move these into a GameObjectManager
-    private static List<Sprite2D> _sprites = new List<Sprite2D>();
-    private static List<Shape2D> _shapes = new List<Shape2D>();
 
     public Color BackgroundColor = Color.Black;
 
@@ -66,31 +64,6 @@ public abstract class Engine
         _threadCancellationToken.Cancel();
     }
 
-    public static IEnumerable<BaseDrawable> GetGameObjects()
-    {
-        return Enumerable.Empty<BaseDrawable>()
-            .Union(_sprites)
-            .Union(_shapes);
-    }
-
-    public static void RegisterShape(BaseDrawable shape)
-    {
-        if (shape.GetType() == typeof(Shape2D))
-            _shapes.Add((Shape2D)shape);
-
-        if (shape.GetType() == typeof(Sprite2D))
-            _sprites.Add((Sprite2D)shape);
-    }
-
-    public static void UnregisterShape(BaseDrawable shape)
-    {
-        if (shape.GetType() == typeof(Shape2D))
-            _shapes.Remove((Shape2D)shape);
-
-        if (shape.GetType() == typeof(Sprite2D))
-            _sprites.Remove((Sprite2D)shape);
-    }
-
     private void GameLoop()
     {
         try
@@ -131,12 +104,12 @@ public abstract class Engine
 
         try
         {
-            foreach (var shape in _shapes)
+            foreach (var shape in GameObjectManager.GetGameObjects<Shape2D>())
             {
                 g.FillRectangle(new SolidBrush(shape.Fill), shape.Rectangle());
             }
 
-            foreach (var sprite in _sprites)
+            foreach (var sprite in GameObjectManager.GetGameObjects<Sprite2D>())
             {
                 g.DrawImage(sprite.Sprite, sprite.Position.X, sprite.Position.Y, sprite.Scale.X, sprite.Scale.Y);
             }
