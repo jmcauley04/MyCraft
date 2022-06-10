@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
@@ -9,13 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="Display.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Assets\ness_sprite_sheet.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\MyGameEngine.Core\MyGameEngine.Core.csproj" />
   </ItemGroup>
 
 </Project>
