@@ -6,6 +6,14 @@ public abstract class GameObject
     public Vector2 Scale;
     public string Tag = string.Empty;
 
+    public bool IsColliding(Vector2 coord)
+    {
+        return (Position.X < coord.X &&
+            Position.X + Scale.X > coord.X &&
+            Position.Y < coord.Y &&
+            Position.Y + Scale.Y > coord.Y);
+    }
+
     public bool IsColliding(GameObject? other)
     {
         if (other is null)

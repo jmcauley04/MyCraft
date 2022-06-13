@@ -32,7 +32,6 @@ public static class GameObjectFactory
         };
 
         GameObjectManager.RegisterGameObject(drawable);
-        Log.Message($"{tag} has been registered", ConsoleColor.Green, typeof(T).Name);
 
         return drawable;
     }

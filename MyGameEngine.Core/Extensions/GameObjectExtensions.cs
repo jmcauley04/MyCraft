@@ -3,7 +3,7 @@ using MyGameEngine.Core.Models;
 
 namespace MyGameEngine.Core.Extensions;
 
-public static class BaseDrawableExtensions
+public static class GameObjectExtensions
 {
     public static void DestroySelf(this GameObject drawable)
     {

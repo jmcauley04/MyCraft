@@ -1,11 +1,12 @@
 ﻿using MyGameEngine.Core;
 using MyGameEngine.Core.Controllers;
 using MyGameEngine.Core.Extensions;
+using MyGameEngine.Core.Managers;
 using MyGameEngine.Core.Models;
 
 namespace MyCraft2D.Controllers;
 
-public class MyCraftPlayerController : GameController
+public class PlayerController : GameController
 {
     static int _iterationsPerImage = 10;
     static int _iterationNumber = 0;
@@ -69,7 +70,13 @@ public class MyCraftPlayerController : GameController
             var distance = coords.DistanceFrom(_player.Position + (_player.Scale / 2f));
 
             if (distance <= _maxReach)
-                Log.Info($"I can reach it! {distance}");
+            {
+                var collisions = GameObjectManager.GetCollisionsAt(coords);
+                var hit = collisions.LastOrDefault();
+                //TODO: Perhaps an interface that decides that things are mineable?  IMineable
+                if (hit is not null && hit.Tag == "Ground")
+                    hit.DestroySelf();
+            }
             else
                 Log.Info($"I can't reach it! {distance}");
         }

@@ -26,6 +26,7 @@ public static class GameObjectManager
             _dictionary[layer] = new();
 
         _dictionary[layer].Add(gameObject);
+        Log.Message($"{gameObject.Tag} has been registered", ConsoleColor.Green, gameObject.GetType().Name);
     }
 
     public static void UnregisterGameObject(GameObject gameObject)
@@ -34,9 +35,17 @@ public static class GameObjectManager
             if (kvp.Value.Contains(gameObject))
             {
                 kvp.Value.Remove(gameObject);
+                Log.Message($"{gameObject.Tag} has been unregistered", ConsoleColor.Green, gameObject.GetType().Name);
 
                 if (kvp.Value.Count == 0)
                     _dictionary.Remove(kvp.Key);
             }
+    }
+
+    public static IEnumerable<GameObject> GetCollisionsAt(Vector2 position, int layer = 0)
+    {
+        foreach (var gameObject in _dictionary[layer])
+            if (gameObject.IsColliding(position))
+                yield return gameObject;
     }
 }

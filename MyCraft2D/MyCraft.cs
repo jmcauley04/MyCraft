@@ -2,6 +2,7 @@
 using MyGameEngine.Core;
 using MyGameEngine.Core.Assets;
 using MyGameEngine.Core.Factories;
+using MyGameEngine.Core.Managers;
 using MyGameEngine.Core.Models;
 
 namespace MyCraft2D;
@@ -9,6 +10,7 @@ namespace MyCraft2D;
 public class MyCraft : Engine
 {
     static int _tileSize = 50;
+    static int _charSize = 40;
 
     public MyCraft() : base(new Vector2(1200, 800), "MyCraft")
     {
@@ -26,8 +28,7 @@ public class MyCraft : Engine
 
     public void LoadMap(string[,] map)
     {
-        CameraPosition.X = (_screenSize.X - _tileSize * map.GetLength(1)) / 2;
-        CameraPosition.Y = (_screenSize.Y - _tileSize * map.GetLength(0)) / 2;
+        CameraManager.SetScreensize(_screenSize);
 
         for (int x = 0; x < map.GetLength(0); x++)
         {
@@ -40,12 +41,17 @@ public class MyCraft : Engine
                 }
                 else if (map[x, y] == "p")
                 {
-                    var _player = GameObjectFactory.RegisterSprite<Player, ImageId>(new Vector2(y * _tileSize + _tileSize / 8, x * _tileSize), new Vector2(_tileSize, _tileSize), "Player", ImageId.PlayerRight);
-                    LoadController<MyCraftPlayerController>()
+                    var _player = GameObjectFactory.RegisterSprite<Player, ImageId>(new Vector2(y * _tileSize + _tileSize / 8, x * _tileSize), new Vector2(_charSize, _charSize), "Player", ImageId.PlayerRight);
+                    LoadController<PlayerController>()
                         .SetPlayer(_player);
 
                     LoadController<StatusBarsController>()
                         .SetPlayer(_player);
+
+                    CameraManager.RegisterCamera(new Camera("main")
+                    {
+                        Target = _player
+                    });
                 }
             }
         }

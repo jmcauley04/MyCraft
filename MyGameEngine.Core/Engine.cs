@@ -97,8 +97,13 @@ public abstract class Engine
     {
         Graphics g = e.Graphics;
         g.Clear(BackgroundColor);
-        //g.TranslateTransform(CameraPosition.X, CameraPosition.Y);
-        //g.RotateTransform(CameraAngle);
+
+        if (CameraManager.ActiveCamera is not null)
+        {
+            CameraManager.UpdateActiveCamera();
+            g.TranslateTransform(-CameraManager.ActiveCamera.Position.X, -CameraManager.ActiveCamera.Position.Y);
+            g.RotateTransform(CameraManager.ActiveCamera.Angle);
+        }
 
         try
         {
@@ -163,6 +168,11 @@ public abstract class Engine
 
     private void SetMouse(MouseEventArgs e, bool target)
     {
-        _controllersManager.SetMouse(e.Button.ToString(), target, new(e.X, e.Y));
+        var clickPosition = new Vector2(e.X, e.Y);
+
+        if (CameraManager.ActiveCamera is not null)
+            clickPosition += CameraManager.ActiveCamera.Position;
+
+        _controllersManager.SetMouse(e.Button.ToString(), target, clickPosition);
     }
 }
