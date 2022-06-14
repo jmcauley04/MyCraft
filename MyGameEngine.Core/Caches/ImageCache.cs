@@ -10,7 +10,7 @@ public static class ImageCache<T> where T : Enum
     /// The image cache includes a list of 1 or more bitmaps for each ImageId.
     /// Animation can be achieved by cycling through a list of bitmaps.
     /// </summary>
-    private static Dictionary<T, List<Bitmap>> _cache = new Dictionary<T, List<Bitmap>>();
+    private readonly static Dictionary<T, List<Bitmap>> _cache = new Dictionary<T, List<Bitmap>>();
 
     public static Bitmap CacheImage(T imageId, string path, Vector2 cropPosition, Vector2 cropSize)
     {

@@ -6,13 +6,13 @@ namespace MyGameEngine.Core;
 
 public abstract class Engine
 {
-    ControllersManager _controllersManager;
+    ControllersManager _controllersManager = null!;
 
     protected Vector2 _screenSize = new Vector2(1200, 800);
     private string _title;
     private Display? _window;
     private Thread? _gameLoopThread;
-    private CancellationTokenSource _threadCancellationToken;
+    private CancellationTokenSource? _threadCancellationToken;
 
     public Color BackgroundColor = Color.Black;
 
@@ -56,7 +56,7 @@ public abstract class Engine
 
     private void OnClose(object? sender, FormClosingEventArgs e)
     {
-        _threadCancellationToken.Cancel();
+        _threadCancellationToken?.Cancel();
     }
 
     private void GameLoop()
@@ -67,7 +67,7 @@ public abstract class Engine
             OnLoad();
             while (true)
             {
-                _threadCancellationToken.Token.ThrowIfCancellationRequested();
+                _threadCancellationToken?.Token.ThrowIfCancellationRequested();
 
                 try
                 {

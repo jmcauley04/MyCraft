@@ -2,8 +2,8 @@
 
 public abstract class GameObject
 {
-    public Vector2 Position;
-    public Vector2 Scale;
+    public Vector2 Position = null!;
+    public Vector2 Scale = null!;
     public string Tag = string.Empty;
 
     public bool IsColliding(Vector2 coord)

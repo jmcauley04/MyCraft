@@ -5,7 +5,7 @@ namespace MyGameEngine.Core.Managers;
 
 public class ControllersManager
 {
-    List<IGameController> _controllers = new();
+    readonly List<IGameController> _controllers = new();
 
     Action? OnUpdate;
     Action<string, bool>? OnSetKey;

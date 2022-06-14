@@ -1,7 +1,8 @@
 ﻿using MyCraft2D.Controllers;
+using MyCraft2D.GameObjects;
+using MyCraft2D.GameObjects.Tiles;
 using MyGameEngine.Core;
 using MyGameEngine.Core.Assets;
-using MyGameEngine.Core.Factories;
 using MyGameEngine.Core.Managers;
 using MyGameEngine.Core.Models;
 
@@ -9,9 +10,6 @@ namespace MyCraft2D;
 
 public class MyCraft : Engine
 {
-    static int _tileSize = 50;
-    static int _charSize = 40;
-
     public MyCraft() : base(new Vector2(1200, 800), "MyCraft")
     {
     }
@@ -36,19 +34,18 @@ public class MyCraft : Engine
             {
                 if (map[x, y] == "g")
                 {
-                    var shape = GameObjectFactory.RegisterShape<Shape2D>(new Vector2(y * _tileSize, x * _tileSize), new Vector2(_tileSize, _tileSize), "Ground");
-                    shape.Fill = Color.DarkGray;
+                    GroundObject.Build(y * Settings.TileSize, x * Settings.TileSize);
                 }
                 else if (map[x, y] == "p")
                 {
-                    var _player = GameObjectFactory.RegisterSprite<Player, ImageId>(new Vector2(y * _tileSize + _tileSize / 8, x * _tileSize), new Vector2(_charSize, _charSize), "Player", ImageId.PlayerRight);
+                    var _player = PlayerObject.Build(y * Settings.TileSize + Settings.TileSize / 8, x * Settings.TileSize);
                     LoadController<PlayerController>()
                         .SetPlayer(_player);
 
                     LoadController<StatusBarsController>()
                         .SetPlayer(_player);
 
-                    CameraManager.RegisterCamera(new Camera("main")
+                    CameraManager.RegisterCamera(new Camera(Tags.Camera_Main)
                     {
                         Target = _player
                     });

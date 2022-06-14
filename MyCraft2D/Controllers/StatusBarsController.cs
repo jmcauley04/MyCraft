@@ -5,19 +5,19 @@ namespace MyCraft2D.Controllers
 {
     public class StatusBarsController : GameController
     {
-        Player _player;
-        Shape2D _bgBar;
-        Shape2D _healthbar;
-        Shape2D _manabar;
-        Shape2D _staminabar;
+        Player? _player;
+        Shape2D? _bgBar;
+        Shape2D? _healthbar;
+        Shape2D? _manabar;
+        Shape2D? _staminabar;
 
         int maxWidth = 80;
         int barHeight = 10;
 
         public StatusBarsController()
         {
-            var padding = 1;
-            var init = new Vector2(1000, 10);
+            //var padding = 1;
+            //var init = new Vector2(1000, 10);
 
             //_bgBar = GameObjectFactory.RegisterShape<Shape2D>(
             //    init,
