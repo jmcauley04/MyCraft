@@ -15,9 +15,9 @@ public static class GameObjectExtensions
         return new Rectangle((int)drawable.Position.X, (int)drawable.Position.Y, (int)drawable.Scale.X, (int)drawable.Scale.Y);
     }
 
-    public static GameObject? IsColliding(this GameObject drawable, string tag)
+    public static GameObject? IsColliding(this GameObject drawable, string tag, int layer = 0)
     {
-        foreach (var gameObject in GameObjectManager.GetGameObjects())
+        foreach (var gameObject in GameObjectManager.GetLayeredGameObjects[layer])
         {
             if (gameObject.Tag == tag && drawable.IsCollidingX(gameObject) && drawable.IsCollidingY(gameObject))
             {

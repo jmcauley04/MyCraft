@@ -8,6 +8,7 @@ public abstract class Engine
 {
     ControllersManager _controllersManager = null!;
 
+    protected int DrawLayer = 0;
     protected Vector2 _screenSize = new Vector2(1200, 800);
     private string _title;
     private Display? _window;
@@ -107,8 +108,13 @@ public abstract class Engine
 
         try
         {
-            foreach (var shape in GameObjectManager.GetGameObjects())
-                shape.Draw(g);
+            for (int i = DrawLayer - 2; i <= DrawLayer; i++)
+            {
+                if (GameObjectManager.GetLayeredGameObjects.TryGetValue(i, out var objects))
+                    foreach (var shape in objects)
+                        shape.Draw(g, DrawLayer - i);
+
+            }
         }
         catch (Exception ex)
         {

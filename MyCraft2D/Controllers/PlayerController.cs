@@ -73,7 +73,7 @@ public class PlayerController : GameController
 
             if (distance <= _maxReach)
             {
-                var collisions = GameObjectManager.GetCollisionsAt(coords);
+                var collisions = GameObjectManager.GetCollisionsAt(coords, _player.Layer);
                 // try to mine
                 if (button == "Left")
                 {
@@ -103,6 +103,12 @@ public class PlayerController : GameController
     {
         if (_player is null || !_player.IsAlive) return;
 
+        if (_player.IsColliding(Tags.Ground, _player.Layer - 1) is null)
+        {
+            _player.Fall();
+            return;
+        }
+
         var oldPosition = new Vector2(_player.Position.X, _player.Position.Y);
 
         if (_left)
@@ -129,16 +135,16 @@ public class PlayerController : GameController
         _player.Position.BoundDistanceFrom(oldPosition, _playerSpeed * t);
         _stopWatch.Restart();
 
-        if (_player.IsColliding(Tags.Ground) is not null)
+        if (_player.IsColliding(Tags.Ground, _player.Layer) is not null)
         {
             var newPosition = new Vector2(_player.Position.X, _player.Position.Y);
             _player.Position.X = oldPosition.X;
-            if (_player.IsColliding(Tags.Ground) is not null)
+            if (_player.IsColliding(Tags.Ground, _player.Layer) is not null)
             {
                 _player.Position.Y = oldPosition.Y;
                 _player.Position.X = newPosition.X;
 
-                if (_player.IsColliding(Tags.Ground) is not null)
+                if (_player.IsColliding(Tags.Ground, _player.Layer) is not null)
                 {
                     _player.Position.X = oldPosition.X;
                 }

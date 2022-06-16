@@ -58,5 +58,5 @@ public abstract class GameObject
         return false;
     }
 
-    public abstract void Draw(Graphics g);
+    public abstract void Draw(Graphics g, int levelsDown = 0);
 }

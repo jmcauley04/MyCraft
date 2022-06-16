@@ -6,6 +6,8 @@ public static class GameObjectManager
 {
     private static Dictionary<int, HashSet<GameObject>> _dictionary = new();
 
+    public static IReadOnlyDictionary<int, HashSet<GameObject>> GetLayeredGameObjects => _dictionary;
+
     public static IEnumerable<GameObject> GetGameObjects()
     {
         foreach (var kvp in _dictionary.OrderBy(x => x.Key))
@@ -47,5 +49,11 @@ public static class GameObjectManager
         foreach (var gameObject in _dictionary[layer])
             if (gameObject.IsColliding(position))
                 yield return gameObject;
+    }
+
+    public static void UpdateLayer(GameObject gameObject, int targetLayer)
+    {
+        UnregisterGameObject(gameObject);
+        RegisterGameObject(gameObject, targetLayer);
     }
 }

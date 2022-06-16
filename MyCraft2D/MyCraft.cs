@@ -10,12 +10,16 @@ namespace MyCraft2D;
 
 public class MyCraft : Engine
 {
+    Player? Player;
+
     public MyCraft() : base(new Vector2(1200, 800), "MyCraft")
     {
     }
 
     public override void OnDraw()
     {
+        if (Player is not null)
+            DrawLayer = Player.Layer;
     }
 
     public override void OnLoad()
@@ -24,31 +28,34 @@ public class MyCraft : Engine
         LoadMap(Maps.One);
     }
 
-    public void LoadMap(string[,] map)
+    public void LoadMap(string[,,] map)
     {
         CameraManager.SetScreensize(_screenSize);
 
-        for (int x = 0; x < map.GetLength(0); x++)
+        for (int h = 0; h < map.GetLength(0); h++)
         {
-            for (int y = 0; y < map.GetLength(1); y++)
+            for (int x = 0; x < map.GetLength(1); x++)
             {
-                if (map[x, y] == "g")
+                for (int y = 0; y < map.GetLength(2); y++)
                 {
-                    GroundObject.Build(y * Settings.TileSize, x * Settings.TileSize);
-                }
-                else if (map[x, y] == "p")
-                {
-                    var _player = PlayerObject.Build(y * Settings.TileSize + Settings.TileSize / 8, x * Settings.TileSize);
-                    LoadController<PlayerController>()
-                        .SetPlayer(_player);
-
-                    LoadController<StatusBarsController>()
-                        .SetPlayer(_player);
-
-                    CameraManager.RegisterCamera(new Camera(Tags.Camera_Main)
+                    if (map[h, x, y] == "g")
                     {
-                        Target = _player
-                    });
+                        GroundObject.Build(y * Settings.TileSize, x * Settings.TileSize, h - 2);
+                    }
+                    else if (map[h, x, y] == "p")
+                    {
+                        Player = PlayerObject.Build(y * Settings.TileSize + Settings.TileSize / 8, x * Settings.TileSize);
+                        LoadController<PlayerController>()
+                            .SetPlayer(Player);
+
+                        LoadController<StatusBarsController>()
+                            .SetPlayer(Player);
+
+                        CameraManager.RegisterCamera(new Camera(Tags.Camera_Main)
+                        {
+                            Target = Player
+                        });
+                    }
                 }
             }
         }
